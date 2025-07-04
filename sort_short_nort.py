@@ -2,6 +2,7 @@ import os
 import shutil
 import hashlib
 from datetime import datetime
+import argparse
 
 # Optional: For AI photo classification (stub function for now)
 def ai_classify_image(file_path):
@@ -49,7 +50,7 @@ def infer_project_or_genre(file_path, file_type):
     parent = os.path.basename(os.path.dirname(file_path))
     return parent if parent else "Uncategorized"
 
-def move_unique_files(source_folder, dest_folder):
+def move_unique_files(source_folder, dest_folder, move_files=False, dry_run=False):
     hash_dict = {}
     for root, dirs, files in os.walk(source_folder):
         for filename in files:
@@ -85,20 +86,52 @@ def move_unique_files(source_folder, dest_folder):
                 final_path = os.path.join(target_dir, f"{name}_v{version}{ext}")
                 version += 1
             else:
-                shutil.copy2(full_path, final_path)
-                print(f"Copied: {full_path} -> {final_path}")
+                action = "Moved" if move_files else "Copied"
+                if dry_run:
+                    print(f"[DRY RUN] {action}: {full_path} -> {final_path}")
+                else:
+                    if move_files:
+                        shutil.move(full_path, final_path)
+                    else:
+                        shutil.copy2(full_path, final_path)
+                    print(f"{action}: {full_path} -> {final_path}")
 
-def main():
-    print("Organize ALL your files by Year / Type / Project_or_Genre with deduplication and versioning.\n")
-    source_folder = input("Enter the FULL path of your source folder: ").strip()
-    dest_folder = input("Enter the FULL path for your new organized folder: ").strip()
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description=(
+            "Organize files by Year/Type/Project with optional deduplication "
+            "and versioning"
+        )
+    )
+    parser.add_argument("source_folder", help="Path of the source folder")
+    parser.add_argument("dest_folder", help="Path for the organized output")
+    parser.add_argument(
+        "--move",
+        action="store_true",
+        help="Move files instead of copying them",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Show actions without writing any files",
+    )
+    return parser.parse_args()
 
-    if not os.path.isdir(source_folder):
+
+def main() -> None:
+    args = parse_args()
+
+    if not os.path.isdir(args.source_folder):
         print("Error: Source folder does not exist or is not accessible.")
         return
 
-    os.makedirs(dest_folder, exist_ok=True)
-    move_unique_files(source_folder, dest_folder)
+    os.makedirs(args.dest_folder, exist_ok=True)
+    move_unique_files(
+        args.source_folder,
+        args.dest_folder,
+        move_files=args.move,
+        dry_run=args.dry_run,
+    )
     print("Done! Check your new folder structure.")
 
 if __name__ == "__main__":

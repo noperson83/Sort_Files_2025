@@ -50,6 +50,14 @@ def infer_project_or_genre(file_path, file_type):
     parent = os.path.basename(os.path.dirname(file_path))
     return parent if parent else "Uncategorized"
 
+def generate_media_filename(file_path, file_type, project_or_genre):
+    ts = datetime.fromtimestamp(os.path.getmtime(file_path)).strftime("%Y%m%d_%H%M%S")
+    name, ext = os.path.splitext(os.path.basename(file_path))
+    if file_type in ("Photos", "Videos"):
+        clean_proj = project_or_genre.replace(" ", "_")
+        return f"{clean_proj}_{ts}{ext}"
+    return name + ext
+
 def move_unique_files(source_folder, dest_folder, move_files=False, dry_run=False):
     hash_dict = {}
     for root, dirs, files in os.walk(source_folder):
@@ -74,7 +82,10 @@ def move_unique_files(source_folder, dest_folder, move_files=False, dry_run=Fals
             os.makedirs(target_dir, exist_ok=True)
 
             # Handle versioning if a file with same name but different content exists
-            base_filename = filename
+            if file_type in ("Photos", "Videos"):
+                base_filename = generate_media_filename(full_path, file_type, project_or_genre)
+            else:
+                base_filename = filename
             final_path = os.path.join(target_dir, base_filename)
             version = 1
             while os.path.exists(final_path):

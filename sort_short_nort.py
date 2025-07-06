@@ -9,6 +9,7 @@ from google.cloud import vision
 # Optional: For AI photo classification using Google Cloud Vision
 def ai_classify_image(file_path):
     """Return the first label from Google Cloud Vision label detection."""
+    print("Calling Vision API on:", file_path)
     try:
         client = vision.ImageAnnotatorClient()
         with open(file_path, "rb") as image_file:
@@ -61,6 +62,7 @@ def infer_project_or_genre(file_path, file_type):
     if file_type in ("Photos", "Videos"):
         # Run classifier and store result
         result = ai_classify_image(file_path)
+        print("Vision API result:", result)
 
     if not result or result == "Uncategorized":
         # Fallback to the parent folder name when classification fails

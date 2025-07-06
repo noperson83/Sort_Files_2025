@@ -40,6 +40,16 @@ pip install google-cloud-vision
 export GOOGLE_APPLICATION_CREDENTIALS=/path/to/your/service-account.json
 ```
 
+On Windows set the variable in PowerShell or Command Prompt:
+
+```powershell
+$env:GOOGLE_APPLICATION_CREDENTIALS = "C:\path\service-account.json"
+```
+
+```cmd
+set GOOGLE_APPLICATION_CREDENTIALS="C:\path\service-account.json"
+```
+
 `GOOGLE_APPLICATION_CREDENTIALS` must point to a service account JSON file with
 access to the Vision API.
 

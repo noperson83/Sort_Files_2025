@@ -4,6 +4,17 @@ This project organizes files into a structured folder hierarchy. Files are
 sorted by the year they were last modified, their type (e.g. Music, Photos),
 and an inferred project or genre.
 
+### Recognized file types
+
+- **Music**: `.mp3`, `.wav`, `.flac`, `.aac`
+- **Photos**: `.jpg`, `.jpeg`, `.png`, `.gif`, `.bmp`
+- **Videos**: `.mp4`, `.mov`, `.avi`, `.mkv`
+- **Art**: `.psd`, `.ai`, `.svg`
+- **3D**: `.blend`, `.fbx`, `.obj`, `.dae`, `.3ds`, `.stl`, `.ply`, `.gltf`, `.glb`, `.rbxl`, `.rbxm`
+- **Code**: `.py`, `.js`, `.ts`, `.rb`
+- **Web**: `.html`, `.css`, `.json`, `.xml`
+- **Other**: everything else
+
 ## Setup
 
 Install the required Python packages using `requirements.txt`:

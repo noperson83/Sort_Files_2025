@@ -96,6 +96,20 @@ def infer_type(file_path):
         return "Videos"
     elif ext in ['.psd', '.ai', '.svg']:
         return "Art"
+    elif ext in [
+        '.blend',
+        '.fbx',
+        '.obj',
+        '.dae',
+        '.3ds',
+        '.stl',
+        '.ply',
+        '.gltf',
+        '.glb',
+        '.rbxl',
+        '.rbxm',
+    ]:
+        return "3D"
     elif ext in ['.py', '.js', '.ts', '.rb']:
         return "Code"
     elif ext in ['.html', '.css', '.json', '.xml']:

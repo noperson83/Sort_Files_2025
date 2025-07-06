@@ -3,6 +3,7 @@ import shutil
 import hashlib
 from datetime import datetime
 import argparse
+import re
 
 from google.cloud import vision
 
@@ -76,10 +77,14 @@ def infer_project_or_genre(file_path, file_type):
 def generate_media_filename(file_path, file_type, project_or_genre):
     ts = datetime.fromtimestamp(os.path.getmtime(file_path)).strftime("%Y%m%d_%H%M%S")
     name, ext = os.path.splitext(os.path.basename(file_path))
+
+    # Only letters, numbers, hyphen and underscore are preserved
+    sanitize = lambda s: re.sub(r'[^A-Za-z0-9_-]+', '_', s).strip('_')
+
     if file_type in ("Photos", "Videos"):
-        clean_proj = project_or_genre.replace(" ", "_")
+        clean_proj = sanitize(project_or_genre.replace(" ", "_"))
         return f"{clean_proj}_{ts}{ext}"
-    return name + ext
+    return sanitize(name) + ext
 
 def move_unique_files(source_folder, dest_folder, move_files=False, dry_run=False):
     hash_dict = {}

@@ -10,6 +10,7 @@ from google.cloud import vision
 def ai_classify_image(file_path):
     """Return the first label from Google Cloud Vision label detection."""
     print("Calling Vision API on:", file_path)
+    response = None
     try:
         client = vision.ImageAnnotatorClient()
         with open(file_path, "rb") as image_file:
@@ -19,8 +20,10 @@ def ai_classify_image(file_path):
         labels = response.label_annotations
         if labels:
             return labels[0].description
-    except Exception:
-        pass
+    except Exception as e:
+        print("Vision API classification error:", e)
+        if response and getattr(response, "error", None) and getattr(response.error, "message", None):
+            print("Vision API error message:", response.error.message)
     return "Uncategorized"
 
 def get_file_hash(file_path, chunk_size=8192):

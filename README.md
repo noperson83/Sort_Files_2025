@@ -29,3 +29,16 @@ When processing Photos and Videos the tool renames files based on the detected
 project or genre and the file's modification timestamp. For example an image in
 the "Vacation" category is copied as `Vacation_20240101_101500.jpg`. Other file
 types keep their original names.
+
+### Google Cloud Vision integration
+
+Photo and video categories are inferred using the Google Cloud Vision API. To
+enable this feature install the dependency and provide credentials:
+
+```bash
+pip install google-cloud-vision
+export GOOGLE_APPLICATION_CREDENTIALS=/path/to/your/service-account.json
+```
+
+`GOOGLE_APPLICATION_CREDENTIALS` must point to a service account JSON file with
+access to the Vision API.

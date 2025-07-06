@@ -4,10 +4,22 @@ import hashlib
 from datetime import datetime
 import argparse
 
-# Optional: For AI photo classification (stub function for now)
+from google.cloud import vision
+
+# Optional: For AI photo classification using Google Cloud Vision
 def ai_classify_image(file_path):
-    # TODO: Plug in AI model or API
-    # Return something like "Family", "Travel", "Music", etc.
+    """Return the first label from Google Cloud Vision label detection."""
+    try:
+        client = vision.ImageAnnotatorClient()
+        with open(file_path, "rb") as image_file:
+            content = image_file.read()
+        image = vision.Image(content=content)
+        response = client.label_detection(image=image)
+        labels = response.label_annotations
+        if labels:
+            return labels[0].description
+    except Exception:
+        pass
     return "Uncategorized"
 
 def get_file_hash(file_path, chunk_size=8192):

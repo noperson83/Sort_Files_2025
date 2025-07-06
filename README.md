@@ -29,3 +29,5 @@ When processing Photos and Videos the tool renames files based on the detected
 project or genre and the file's modification timestamp. For example an image in
 the "Vacation" category is copied as `Vacation_20240101_101500.jpg`. Other file
 types keep their original names.
+If the AI classifier doesn't return a meaningful result (empty or
+`"Uncategorized"`), the parent folder name is used instead.

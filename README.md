@@ -12,8 +12,9 @@ Install the required Python packages using `requirements.txt`:
 pip install -r requirements.txt
 ```
 
-This installs [Google Cloud Vision](https://cloud.google.com/vision) and any
-additional dependencies needed by the script.
+This installs [Google Cloud Vision](https://cloud.google.com/vision) and
+[`opencv-python-headless`](https://pypi.org/project/opencv-python-headless/)
+for extracting video frames.
 
 ## Usage
 
@@ -44,9 +45,13 @@ types keep their original names.
 
 ### Google Cloud Vision integration
 
-Photo and video categories are inferred using the Google Cloud Vision API. To
-enable this feature, install the Vision dependency (via the requirements file)
-and provide credentials:
+Photo categories are inferred using the Google Cloud Vision API. Videos are
+classified by sampling a few frames with OpenCV and sending those images to the
+Vision API. The most common label among the frames is used for the video's
+category. If classification fails, the tool falls back to the video's parent
+folder name.
+To enable image classification, install the Vision dependency (via the
+requirements file) and provide credentials:
 
 ```bash
 pip install -r requirements.txt  # installs google-cloud-vision

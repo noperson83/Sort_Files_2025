@@ -6,17 +6,15 @@ import argparse
 import re
 
 from google.cloud import vision
+import cv2
 
 # Optional: For AI photo classification using Google Cloud Vision
-def ai_classify_image(file_path):
+def ai_classify_image_bytes(image_bytes: bytes) -> str:
     """Return the first label from Google Cloud Vision label detection."""
-    print("Calling Vision API on:", file_path)
     response = None
     try:
         client = vision.ImageAnnotatorClient()
-        with open(file_path, "rb") as image_file:
-            content = image_file.read()
-        image = vision.Image(content=content)
+        image = vision.Image(content=image_bytes)
         response = client.label_detection(image=image)
         labels = response.label_annotations
         if labels:
@@ -25,6 +23,53 @@ def ai_classify_image(file_path):
         print("Vision API classification error:", e)
         if response and getattr(response, "error", None) and getattr(response.error, "message", None):
             print("Vision API error message:", response.error.message)
+    return "Uncategorized"
+
+
+def ai_classify_image(file_path):
+    """Open the image file and classify it using Cloud Vision."""
+    print("Calling Vision API on:", file_path)
+    try:
+        with open(file_path, "rb") as image_file:
+            content = image_file.read()
+        return ai_classify_image_bytes(content)
+    except Exception as e:
+        print("Failed to read image file:", e)
+    return "Uncategorized"
+
+
+def ai_classify_video(file_path: str, frames: int = 3) -> str:
+    """Sample frames from a video and classify them with Cloud Vision."""
+    print("Classifying video using Vision API:", file_path)
+    try:
+        cap = cv2.VideoCapture(file_path)
+        if not cap.isOpened():
+            print("Failed to open video file")
+            return "Uncategorized"
+        frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        if frame_count <= 0:
+            cap.release()
+            return "Uncategorized"
+        step = max(frame_count // (frames + 1), 1)
+        labels = []
+        for i in range(1, frames + 1):
+            frame_index = i * step
+            cap.set(cv2.CAP_PROP_POS_FRAMES, frame_index)
+            ret, frame = cap.read()
+            if not ret:
+                continue
+            ret, buf = cv2.imencode('.jpg', frame)
+            if not ret:
+                continue
+            label = ai_classify_image_bytes(buf.tobytes())
+            print(f"Frame {i} label:", label)
+            if label != "Uncategorized":
+                labels.append(label)
+        cap.release()
+        if labels:
+            return max(set(labels), key=labels.count)
+    except Exception as e:
+        print("Video classification error:", e)
     return "Uncategorized"
 
 def get_file_hash(file_path, chunk_size=8192):
@@ -63,9 +108,11 @@ def infer_project_or_genre(file_path, file_type):
     parent = os.path.basename(os.path.dirname(file_path))
 
     result = ""
-    if file_type in ("Photos", "Videos"):
-        # Run classifier and store result
+    if file_type == "Photos":
         result = ai_classify_image(file_path)
+        print("Vision API result:", result)
+    elif file_type == "Videos":
+        result = ai_classify_video(file_path)
         print("Vision API result:", result)
 
     if not result or result == "Uncategorized":

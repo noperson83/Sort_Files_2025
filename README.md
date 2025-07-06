@@ -42,3 +42,6 @@ export GOOGLE_APPLICATION_CREDENTIALS=/path/to/your/service-account.json
 
 `GOOGLE_APPLICATION_CREDENTIALS` must point to a service account JSON file with
 access to the Vision API.
+
+If classification returns no label or `Uncategorized`, the tool falls back to
+using the file's parent folder name to determine the project or genre.

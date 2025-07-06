@@ -54,13 +54,19 @@ def infer_type(file_path):
         return "Other"
 
 def infer_project_or_genre(file_path, file_type):
-    # Add your custom rules for genre/project here
-    # For photos, you could run AI classifier
-    if file_type == "Photos" or file_type == "Videos":
-        return ai_classify_image(file_path)
-    # For code/art, maybe use parent folder as project
+    """Infer the project or genre for the given file."""
     parent = os.path.basename(os.path.dirname(file_path))
-    return parent if parent else "Uncategorized"
+
+    result = ""
+    if file_type in ("Photos", "Videos"):
+        # Run classifier and store result
+        result = ai_classify_image(file_path)
+
+    if not result or result == "Uncategorized":
+        # Fallback to the parent folder name when classification fails
+        result = parent if parent else "Uncategorized"
+
+    return result
 
 def generate_media_filename(file_path, file_type, project_or_genre):
     ts = datetime.fromtimestamp(os.path.getmtime(file_path)).strftime("%Y%m%d_%H%M%S")

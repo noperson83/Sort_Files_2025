@@ -1,7 +1,19 @@
 # Sort_Files_2025
+
 This project organizes files into a structured folder hierarchy. Files are
 sorted by the year they were last modified, their type (e.g. Music, Photos),
 and an inferred project or genre.
+
+## Setup
+
+Install the required Python packages using `requirements.txt`:
+
+```bash
+pip install -r requirements.txt
+```
+
+This installs [Google Cloud Vision](https://cloud.google.com/vision) and any
+additional dependencies needed by the script.
 
 ## Usage
 
@@ -33,10 +45,11 @@ types keep their original names.
 ### Google Cloud Vision integration
 
 Photo and video categories are inferred using the Google Cloud Vision API. To
-enable this feature install the dependency and provide credentials:
+enable this feature, install the Vision dependency (via the requirements file)
+and provide credentials:
 
 ```bash
-pip install google-cloud-vision
+pip install -r requirements.txt  # installs google-cloud-vision
 export GOOGLE_APPLICATION_CREDENTIALS=/path/to/your/service-account.json
 ```
 
